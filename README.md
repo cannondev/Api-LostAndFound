@@ -2,23 +2,31 @@
 
 ![Team Photo](Insert a Team Photo URL here)
 [*how?*](https://help.github.com/articles/about-readmes/#relative-links-and-image-paths-in-readme-files)
+![CS52](https://hackmd.io/_uploads/rJiE7PIcye.jpg)
 
-TODO: short project description, some sample screenshots or mockups
+Project Description:
+
+"Lost and Found" is a web app where you send anonymous messages as paper airplanes that land on random spots across a world map for others to discover. Each day, unlock a new country to scratch off, explore fun facts, and uncover hidden messages. Collect unique stamps for your virtual passport as you complete countries and unlock achievements, creating a personalized journey of global stories and connections.
+
 
 ## Architecture
 
-TODO:  descriptions of code organization and tools and libraries used
+tools: react, redux, mongo/mongoose, zustand
 
 ## Setup
 
-TODO: how to get the project dev environment up and running, npm install etc
+npm install 
 
 ## Deployment
 
-TODO: how to deploy the project
+npm run dev
 
 ## Authors
 
-TODO: list of authors
+Yasmeen Hussein
+Peipei Soeung
+Cinay Dilibal
+Thomas Clark
 
 ## Acknowledgments
+
