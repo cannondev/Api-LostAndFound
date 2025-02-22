@@ -4,7 +4,6 @@ import mongoose, { Schema } from 'mongoose';
 const ThoughtSchema = new Schema({
   user: String,
   content: String,
-  //   kiwi
   stamp: String,
   countryOriginated: String,
   countrySentTo: String,

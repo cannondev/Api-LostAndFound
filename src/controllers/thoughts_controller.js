@@ -8,7 +8,10 @@ export async function createThought(thoughtFields) {
       'UK', 'Russia', 'China', 'South Africa', 'Argentina', 'New Zealand', 'Spain', 'South Korea', 'Egypt',
       'Netherlands', 'Turkey',
     ];
-    const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+
+    const filteredCountries = countries.filter((country) => { return country !== thoughtFields.countryOriginated; });
+
+    const randomCountry = filteredCountries[Math.floor(Math.random() * filteredCountries.length)];
     const thought = new Thought({
       ...thoughtFields,
       countrySentTo: randomCountry,
