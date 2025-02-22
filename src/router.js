@@ -2,7 +2,7 @@
 /* eslint-disable consistent-return */
 import { Router } from 'express';
 import mongoose from 'mongoose';
-import * as Thoughts from './controllers/thoughts_controllers';
+import * as Thoughts from './controllers/thoughts_controller';
 
 const router = Router();
 
