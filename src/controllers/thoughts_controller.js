@@ -1,4 +1,3 @@
-// kiwi: make sure it cant be sent back to the same country
 import Thought from '../models/thoughts_model';
 import countryBoundaries from '../data/bounding-boxes.json';
 

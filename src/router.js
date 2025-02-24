@@ -48,6 +48,15 @@ router.route('/thought/:id')
     }
   });
 
+router.get('/thought/user/:userId', async (req, res) => {
+  try {
+    const userThoughts = await Thoughts.getThoughtsByUser(req.params.userId);
+    res.status(200).json(userThoughts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Country Routes
 
 // Unlock a country
