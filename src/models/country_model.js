@@ -1,0 +1,13 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import mongoose, { Schema } from 'mongoose';
+
+const CountrySchema = new Schema({
+  countryName: { type: String, required: true, unique: true },
+  isUnlocked: { type: Boolean, default: false },
+  unlockDate: { type: Date },
+  funFacts: [{ type: String }], // Array of fun facts for the country
+  thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
+});
+
+const CountryModel = mongoose.model('Country', CountrySchema);
+export default CountryModel;
