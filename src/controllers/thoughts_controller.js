@@ -31,6 +31,15 @@ export async function createThought(thoughtFields) {
   }
 }
 
+export async function getThoughtsByUser(userId) {
+  try {
+    const userThoughts = await Thought.find({ user: userId });
+    return userThoughts;
+  } catch (error) {
+    throw new Error(`Get thoughts by user error: ${error}`);
+  }
+}
+
 export async function getThought(id) {
   try {
     const thought = await Thought.findById(id);
