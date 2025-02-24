@@ -32,3 +32,8 @@ export async function getThought(id) {
     throw new Error(`Get thought error: ${error}`);
   }
 }
+
+export const getAllThoughts = async () => {
+  const allThoughts = await Thought.find({});
+  return allThoughts;
+};

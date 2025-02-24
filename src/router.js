@@ -11,7 +11,14 @@ router.get('/', (req, res) => {
 });
 
 router.route('/thought')
-
+  .get(async (req, res) => {
+    try {
+      const thoughts = await Thoughts.getAllThoughts();
+      res.json(thoughts);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  })
   .post(async (req, res) => {
     try {
       const newThought = await Thoughts.createThought(req.body);
