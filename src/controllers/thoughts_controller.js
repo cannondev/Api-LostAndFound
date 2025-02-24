@@ -1,20 +1,27 @@
 // kiwi: make sure it cant be sent back to the same country
 import Thought from '../models/thoughts_model';
+import countryBoundaries from '../data/bounding-boxes.json';
 
 export async function createThought(thoughtFields) {
   try {
-    const countries = [
-      'USA', 'Canada', 'Japan', 'Germany', 'France', 'Australia', 'Italy', 'Brazil', 'India', 'Mexico',
-      'UK', 'Russia', 'China', 'South Africa', 'Argentina', 'New Zealand', 'Spain', 'South Korea', 'Egypt',
-      'Netherlands', 'Turkey',
-    ];
+    const allCountryCodes = Object.keys(countryBoundaries);
 
-    const filteredCountries = countries.filter((country) => { return country !== thoughtFields.countryOriginated; });
+    const filteredCountries = allCountryCodes.filter(
+      (countryCode) => { return countryCode !== thoughtFields.countryOriginated; },
+    );
 
-    const randomCountry = filteredCountries[Math.floor(Math.random() * filteredCountries.length)];
+    // Select a random country
+    const randomCountryCode = filteredCountries[Math.floor(Math.random() * filteredCountries.length)];
+    const [countryName, [minLng, minLat, maxLng, maxLat]] = countryBoundaries[randomCountryCode];
+
+    const randomLng = Math.random() * (maxLng - minLng) + minLng;
+    const randomLat = Math.random() * (maxLat - minLat) + minLat;
+
     const thought = new Thought({
       ...thoughtFields,
-      countrySentTo: randomCountry,
+      countrySentTo: countryName,
+      xCoordinate: randomLng,
+      yCoordinate: randomLat,
     });
 
     const savedThought = await thought.save();

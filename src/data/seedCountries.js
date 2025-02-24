@@ -1,6 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';
 import fetch from 'node-fetch';
-import IndividualModel from './src/models/country_model';
+import IndividualModel from '../models/country_model';
 
 mongoose.connect('mongodb://localhost:27017/lostandfound_db');
 
