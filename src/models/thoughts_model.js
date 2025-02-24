@@ -7,6 +7,8 @@ const ThoughtSchema = new Schema({
   stamp: String,
   countryOriginated: String,
   countrySentTo: String,
+  xCoordinate: Number,
+  yCoordinate: Number,
   createdAt: { type: Date, default: Date.now },
 });
 

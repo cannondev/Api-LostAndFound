@@ -15,7 +15,14 @@ router.get('/', (req, res) => {
 
 // Thought Routes
 router.route('/thought')
-
+  .get(async (req, res) => {
+    try {
+      const thoughts = await Thoughts.getAllThoughts();
+      res.json(thoughts);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  })
   .post(async (req, res) => {
     try {
       const newThought = await Thoughts.createThought(req.body);
@@ -40,6 +47,15 @@ router.route('/thought/:id')
       res.status(500).json({ error: error.message });
     }
   });
+
+router.get('/thought/user/:userId', async (req, res) => {
+  try {
+    const userThoughts = await Thoughts.getThoughtsByUser(req.params.userId);
+    res.status(200).json(userThoughts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Country Routes
 

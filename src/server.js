@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import listEndpoints from 'express-list-endpoints'; // npm install express-list-endpoints
 import router from './router';
 
 // initialize
@@ -53,5 +54,7 @@ async function startServer() {
     console.error(error);
   }
 }
+
+console.log(listEndpoints(app));
 
 startServer();
