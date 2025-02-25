@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import * as Thoughts from './controllers/thoughts_controller';
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getUnlockedCountries, unlockCountry, getAllCountries,
+  getThoughtCoordinates,
 } from './controllers/country_controller';
 
 const router = Router();
@@ -142,3 +143,15 @@ router.route('/countries')
     }
   });
 export default router;
+
+// Get coordinates of a thought
+router.route('/countries/:countryName/thought-coordinates')
+  .get(async (req, res) => {
+    try {
+      const { countryName } = req.params;
+      const coordinates = await getThoughtCoordinates(countryName);
+      res.status(200).json({ message: `Successfully retrieved thought coordinates for ${countryName}`, coordinates });
+    } catch (error) {
+      res.status(500).json({ error: `${error.message}` });
+    }
+  });

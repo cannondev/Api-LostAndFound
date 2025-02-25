@@ -86,3 +86,24 @@ export async function getAllCountries() {
     throw new Error(`Get all countries error: ${error.mesasge}`);
   }
 }
+
+export async function getThoughtCoordinates(countryName) {
+  try {
+    const thoughts = await ThoughtModel.find({ countrySentTo: countryName }, 'xCoordinate yCoordinate _id');
+    if (!thoughts) {
+      throw new Error(`No thoughts found for: ${countryName}`);
+    }
+
+    const coordinates = thoughts.map((thought) => {
+      return {
+        thoughtId: thought._id,
+        xCoordinate: thought.xCoordinate,
+        yCoordinate: thought.yCoordinate,
+      };
+    });
+
+    return coordinates;
+  } catch (error) {
+    throw new Error(`Get country thought coordinates error: ${error.message}`);
+  }
+}
