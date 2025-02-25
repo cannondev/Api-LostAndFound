@@ -1,4 +1,4 @@
-import countryBoundaries from '../data/bounding-boxes.json';
+import countryBoundaries from '../../bounding-boxes.json';
 import Thought from '../models/thoughts_model';
 
 export async function createThought(thoughtFields) {
