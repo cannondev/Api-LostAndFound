@@ -31,7 +31,8 @@
     "express-list-endpoints": "^7.1.1",
     "mongoose": "^8.10.1",
     "morgan": "^1.10.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "react-svg-worldmap": "^2.0.0-alpha.16"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.26.5",
