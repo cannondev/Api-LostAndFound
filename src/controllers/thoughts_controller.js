@@ -1,26 +1,42 @@
-import countryBoundaries from '../../bounding-boxes.json';
+import countryShapes from 'world-map-country-shapes';
+import svgPathBounds from 'svg-path-bounds';
+import { getCode, getName } from 'country-list';
+// import countryBoundaries from '../../bounding-boxes.json';
 import Thought from '../models/thoughts_model';
 
 export async function createThought(thoughtFields) {
   try {
-    const allCountryCodes = Object.keys(countryBoundaries);
+    // Convert country name to ISO code
+    const originatingCountryCode = getCode(thoughtFields.countryOriginated);
 
+    if (!originatingCountryCode) {
+      throw new Error(`Invalid country name provided: ${thoughtFields.countryOriginated}`);
+    }
+
+    // Filter out the originating country
+    const allCountryCodes = countryShapes.map((country) => { return country.id; });
     const filteredCountries = allCountryCodes.filter(
-      (countryCode) => { return countryCode !== thoughtFields.countryOriginated; },
+      (countryCode) => { return countryCode !== originatingCountryCode; },
     );
-
-    // Select a random country
+    // Select a random destination country code
     const randomCountryCode = filteredCountries[Math.floor(Math.random() * filteredCountries.length)];
-    const [countryName, [minLng, minLat, maxLng, maxLat]] = countryBoundaries[randomCountryCode];
-
-    const randomLng = Math.random() * (maxLng - minLng) + minLng;
-    const randomLat = Math.random() * (maxLat - minLat) + minLat;
+    // Get the SVG path for the selected country
+    const countryShapeData = countryShapes.find((c) => { return c.id === randomCountryCode; });
+    if (!countryShapeData) {
+      throw new Error(`Shape not found for country code: ${randomCountryCode}`);
+    }
+    // Convert random country code back to country name
+    const randomCountryName = getName(randomCountryCode);
+    // Extract the bounding box from the SVG path
+    const [minX, minY, maxX, maxY] = svgPathBounds(countryShapeData.shape);
+    const randomX = Math.random() * (maxX - minX) + minX;
+    const randomY = Math.random() * (maxY - minY) + minY;
 
     const thought = new Thought({
       ...thoughtFields,
-      countrySentTo: countryName,
-      xCoordinate: randomLng,
-      yCoordinate: randomLat,
+      countrySentTo: randomCountryName,
+      xCoordinate: randomX,
+      yCoordinate: randomY,
     });
 
     const savedThought = await thought.save();
