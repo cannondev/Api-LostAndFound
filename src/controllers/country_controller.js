@@ -107,3 +107,12 @@ export async function getThoughtCoordinates(countryName) {
     throw new Error(`Get country thought coordinates error: ${error.message}`);
   }
 }
+
+export async function getAllCountriesWithThoughts() {
+  try {
+    const countries = await ThoughtModel.distinct('countrySentTo');
+    return countries;
+  } catch (error) {
+    throw new Error(`Get countries with thoughts error: ${error.message}`);
+  }
+}

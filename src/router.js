@@ -6,6 +6,7 @@ import * as Thoughts from './controllers/thoughts_controller';
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getUnlockedCountries, unlockCountry, getAllCountries,
   getThoughtCoordinates,
+  getAllCountriesWithThoughts,
 } from './controllers/country_controller';
 
 const router = Router();
@@ -69,6 +70,17 @@ router.route('/countries/:countryName/unlock')
       res.status(200).json({ message: `${countryName} unlocked successfully`, country: unlockedCountry });
     } catch (error) {
       res.status(500).json({ error: `Server error: ${error.message}` });
+    }
+  });
+
+// Get all the countries that have thoughts on them
+router.route('/countries/with-thoughts')
+  .get(async (req, res) => {
+    try {
+      const countries = await getAllCountriesWithThoughts();
+      res.status(200).json({ message: 'Successfully retrieved countries with thoughts', countries });
+    } catch (error) {
+      res.status(500).json({ error: `${error.message}` });
     }
   });
 
