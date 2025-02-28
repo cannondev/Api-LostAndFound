@@ -9,6 +9,8 @@ const UserSchema = new Schema(
     },
     password: { type: String, required: true },
     homeCountry: { type: String, required: true },
+    unlockedCountries: { type: [String], default: [] },
+    thoughts: { type: [String], default: [] },
   },
   {
     toObject: { virtuals: true },
