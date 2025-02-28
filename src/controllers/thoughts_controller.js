@@ -1,11 +1,19 @@
 import countryShapes from 'world-map-country-shapes';
 import svgPathBounds from 'svg-path-bounds';
 import { getCode, getName } from 'country-list';
-// import countryBoundaries from '../../bounding-boxes.json';
 import Thought from '../models/thoughts_model';
+import User from '../models/user_model';
 
 export async function createThought(thoughtFields) {
   try {
+    if (!User) {
+      throw new Error('Unauthorized: User is required.');
+    }
+
+    if (!thoughtFields.countryOriginated) {
+      throw new Error('Missing required field: countryOriginated');
+    }
+
     // Convert country name to ISO code
     const originatingCountryCode = getCode(thoughtFields.countryOriginated);
 
@@ -33,7 +41,10 @@ export async function createThought(thoughtFields) {
     const randomY = Math.random() * (maxY - minY) + minY;
 
     const thought = new Thought({
-      ...thoughtFields,
+      user: User._id, // ✅ Set the authenticated user
+      content: thoughtFields.content,
+      stamp: thoughtFields.stamp,
+      countryOriginated: thoughtFields.countryOriginated,
       countrySentTo: randomCountryName,
       xCoordinate: randomX,
       yCoordinate: randomY,
@@ -48,7 +59,10 @@ export async function createThought(thoughtFields) {
 
 export async function getThoughtsByUser(userId) {
   try {
-    const userThoughts = await Thought.find({ user: userId });
+    if (!User) {
+      throw new Error('Unauthorized: User is required.');
+    }
+    const userThoughts = await Thought.find({ user: User._id });
     return userThoughts;
   } catch (error) {
     throw new Error(`Get thoughts by user error: ${error}`);
