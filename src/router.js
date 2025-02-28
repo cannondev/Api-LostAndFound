@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import * as Thoughts from './controllers/thoughts_controller';
+import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_controller';
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
@@ -33,9 +34,9 @@ router.route('/thought')
       res.status(500).json({ error: error.message });
     }
   })
-/**
- * Create a new thought for the authenticated user
- */
+  /**
+   * Create a new thought for the authenticated user
+   */
   .post(requireAuth, async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -100,6 +101,16 @@ router.get('/thought/user', requireAuth, async (req, res) => {
     }
 
     res.status(200).json(userThoughts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/countries/:countryName/thoughts', async (req, res) => {
+  try {
+    const { countryName } = req.params;
+    const thoughts = await getCountryThoughts(countryName);
+    res.status(200).json(thoughts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -294,6 +305,29 @@ router.route('/countries/:countryName/thought-coordinates')
       res.status(200).json({ message: `Successfully retrieved thought coordinates for ${countryName}`, coordinates });
     } catch (error) {
       res.status(500).json({ error: `${error.message}` });
+    }
+  });
+
+// Delete a single thought by ID
+router.delete('/thought/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteThoughtById(id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete ALL thoughts
+router.delete('/thoughts/all', async (req, res) => {
+  try {
+    const result = await deleteAllThoughts();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
     }
   });
 
