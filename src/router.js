@@ -9,6 +9,10 @@ import {
   getAllCountriesWithThoughts,
 } from './controllers/country_controller';
 
+import * as UserController from './controllers/user_controller';
+import { requireAuth, requireSignin } from './services/passport';
+import User from './models/user_model';
+
 const router = Router();
 
 router.get('/', (req, res) => {
@@ -25,12 +29,26 @@ router.route('/thought')
       res.status(500).json({ error: error.message });
     }
   })
-  .post(async (req, res) => {
+  .post(requireAuth, async (req, res) => {
     try {
-      const newThought = await Thoughts.createThought(req.body);
+      const user = await User.findById(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      if (!user.homeCountry) {
+        return res.status(400).json({ error: 'User homeCountry is missing' });
+      }
+
+      const newThought = await Thoughts.createThought({
+        content: req.body.content,
+        countryOriginated: user.homeCountry,
+      });
+
       res.json(newThought);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: `Create thought error: ${error.message}` });
     }
   });
 
@@ -59,14 +77,11 @@ router.get('/thought/user/:userId', async (req, res) => {
   }
 });
 
-// Country Routes
-
-// Unlock a country
 router.route('/countries/:countryName/unlock')
-  .post(async (req, res) => {
+  .post(requireAuth, async (req, res) => {
     try {
       const { countryName } = req.params;
-      const unlockedCountry = await unlockCountry(countryName);
+      const unlockedCountry = await unlockCountry(countryName); // unlock the country
       res.status(200).json({ message: `${countryName} unlocked successfully`, country: unlockedCountry });
     } catch (error) {
       res.status(500).json({ error: `Server error: ${error.message}` });
@@ -98,7 +113,7 @@ router.route('/countries/:countryName')
 
 // Add fun fact to a country
 router.route('/countries/:countryName/funfact')
-  .post(async (req, res) => {
+  .post(requireAuth, async (req, res) => {
     try {
       const { countryName } = req.params;
       const { fact } = req.body;
@@ -132,6 +147,15 @@ router.route('/countries/:countryName/thoughts')
     }
   });
 
+router.get('/thoughts/my-thoughts', requireAuth, async (req, res) => {
+  try {
+    const userThoughts = await Thoughts.getThoughtsByUser(req.user);
+    res.status(200).json(userThoughts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get all facts of a country
 router.route('/countries/:countryName/funFacts')
   .get(async (req, res) => {
@@ -154,7 +178,6 @@ router.route('/countries')
       res.status(500).json({ error: `${error.message}` });
     }
   });
-export default router;
 
 // Get coordinates of a thought
 router.route('/countries/:countryName/thought-coordinates')
@@ -167,3 +190,24 @@ router.route('/countries/:countryName/thought-coordinates')
       res.status(500).json({ error: `${error.message}` });
     }
   });
+
+// auth in routes
+router.post('/signin', requireSignin, async (req, res) => {
+  try {
+    const { token, email, homeCountry } = UserController.signin(req.user);
+    res.json({ token, email, homeCountry });
+  } catch (error) {
+    res.status(422).send({ error: error.toString() });
+  }
+});
+
+router.post('/signup', async (req, res) => {
+  try {
+    const { token, email, homeCountry } = await UserController.signup(req.body);
+    res.json({ token, email, homeCountry });
+  } catch (error) {
+    res.status(422).send({ error: error.toString() });
+  }
+});
+
+export default router;

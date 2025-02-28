@@ -1,0 +1,27 @@
+import jwt from 'jsonwebtoken';
+import User from '../models/user_model';
+
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  return jwt.sign({ sub: user.id, iat: timestamp }, process.env.AUTH_SECRET);
+}
+
+export const signin = (user) => {
+  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+};
+
+export const signup = async ({ email, password, homeCountry }) => {
+  if (!email || !password || !homeCountry) {
+    throw new Error('You must provide email, password, and home country');
+  }
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new Error('Email is in use');
+  }
+
+  const user = new User({ email, password, homeCountry });
+  await user.save();
+
+  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+};
