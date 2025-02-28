@@ -328,9 +328,6 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-    }
-  });
-
 /**
  * Sign in a user and return an authentication token.
  */

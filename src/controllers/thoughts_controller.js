@@ -15,8 +15,8 @@ export async function createThought(thoughtFields) {
     }
 
     // Convert country name to ISO code
-    const normalizedCountryName = countryNameMap[thoughtFields.countryOriginated] || thoughtFields.countryOriginated;
-    const originatingCountryCode = getCode(normalizedCountryName);
+    // const normalizedCountryName = countryNameMap[thoughtFields.countryOriginated] || thoughtFields.countryOriginated;
+    const originatingCountryCode = getCode(thoughtFields.countryOriginated);
 
     if (!originatingCountryCode) {
       throw new Error(`Invalid country name provided: ${thoughtFields.countryOriginated}`);
