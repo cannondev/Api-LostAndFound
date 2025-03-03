@@ -7,7 +7,7 @@ import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_con
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts,
+  getAllCountriesWithThoughts, getScratchData, saveScratchData,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
@@ -328,8 +328,6 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-    }
-  });
 
 /**
  * Sign in a user and return an authentication token.
@@ -354,5 +352,26 @@ router.post('/signup', async (req, res) => {
     res.status(422).send({ error: error.toString() });
   }
 });
+
+router.route('/countries/:countryName/scratch')
+  .get(async (req, res) => {
+    try {
+      const { countryName } = req.params;
+      const data = await getScratchData(countryName);
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      const { countryName } = req.params;
+      const scratchPath = req.body; // Expecting an object like { id, points: [...] }
+      const savedPath = await saveScratchData(countryName, scratchPath);
+      res.status(200).json({ message: 'Scratch data saved successfully', scratchPath: savedPath });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 export default router;
