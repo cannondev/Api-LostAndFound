@@ -7,7 +7,7 @@ import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_con
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts, getScratchData, saveScratchData,
+  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
@@ -354,20 +354,21 @@ router.post('/signup', async (req, res) => {
 });
 
 router.route('/countries/:countryName/scratch')
-  .get(async (req, res) => {
+  .get(requireAuth, async (req, res) => {
     try {
       const { countryName } = req.params;
-      const data = await getScratchData(countryName);
+      // Use the authenticated user's id (req.user.id)
+      const data = await getScratchDataForUser(req.user.id, countryName);
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   })
-  .post(async (req, res) => {
+  .post(requireAuth, async (req, res) => {
     try {
       const { countryName } = req.params;
       const scratchPath = req.body; // Expecting an object like { id, points: [...] }
-      const savedPath = await saveScratchData(countryName, scratchPath);
+      const savedPath = await saveScratchDataForUser(req.user.id, countryName, scratchPath);
       res.status(200).json({ message: 'Scratch data saved successfully', scratchPath: savedPath });
     } catch (error) {
       res.status(500).json({ error: error.message });
