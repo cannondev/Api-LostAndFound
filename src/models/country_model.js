@@ -7,6 +7,7 @@ const CountrySchema = new Schema({
   unlockDate: { type: Date },
   funFacts: [{ type: String }], // Array of fun facts for the country
   thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
+  scratchPaths: { type: Array, default: [] },
 });
 
 const CountryModel = mongoose.model('Country', CountrySchema);
