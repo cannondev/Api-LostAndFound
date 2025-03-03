@@ -1,5 +1,6 @@
 import ThoughtModel from '../models/thoughts_model';
 import CountryModel from '../models/country_model';
+import User from '../models/user_model';
 
 // country_controller.js
 function normalizeCountryName(countryName) {
@@ -133,33 +134,36 @@ export async function getAllCountriesWithThoughts() {
   }
 }
 
-export async function getScratchData(countryName) {
+export async function getScratchDataForUser(userId, countryName) {
   try {
     const normalizedName = normalizeCountryName(countryName);
-    const country = await CountryModel.findOne({ countryName: normalizedName });
-    if (!country) {
-      throw new Error(`Country not found: ${countryName}`);
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
     }
-    // Return scratchPaths or an empty array if not defined
-    return { paths: country.scratchPaths || [] };
+    // Use the Map API to get scratch paths for this country; if none, return an empty array.
+    const paths = user.scratchPaths.get(normalizedName) || [];
+    return { paths };
   } catch (error) {
     throw new Error(`Get scratch data error: ${error.message}`);
   }
 }
 
-export async function saveScratchData(countryName, scratchPath) {
+export async function saveScratchDataForUser(userId, countryName, scratchPath) {
   try {
     const normalizedName = normalizeCountryName(countryName);
-    const country = await CountryModel.findOne({ countryName: normalizedName });
-    if (!country) {
-      throw new Error(`Country not found: ${countryName}`);
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
     }
-    // Initialize scratchPaths if necessary and add the new scratchPath
-    if (!country.scratchPaths) {
-      country.scratchPaths = [];
+    // Get existing paths (or an empty array), then add the new scratch path.
+    let paths = user.scratchPaths.get(normalizedName);
+    if (!paths) {
+      paths = [];
     }
-    country.scratchPaths.push(scratchPath);
-    await country.save();
+    paths.push(scratchPath);
+    user.scratchPaths.set(normalizedName, paths);
+    await user.save();
     return scratchPath;
   } catch (error) {
     throw new Error(`Save scratch data error: ${error.message}`);
