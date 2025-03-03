@@ -7,7 +7,9 @@ function tokenForUser(user) {
 }
 
 export const signin = (user) => {
-  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+  return {
+    token: tokenForUser(user), id: user.id, email: user.email, homeCountry: user.homeCountry,
+  };
 };
 
 export const signup = async ({ email, password, homeCountry }) => {
@@ -23,5 +25,7 @@ export const signup = async ({ email, password, homeCountry }) => {
   const user = new User({ email, password, homeCountry });
   await user.save();
 
-  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+  return {
+    token: tokenForUser(user), id: user.id, email: user.email, homeCountry: user.homeCountry,
+  };
 };

@@ -206,7 +206,7 @@ router.route('/countries/:countryName/funfact')
 /**
  * Retrieve all countries unlocked by the authenticated user.
  */
-router.route('/countries/unlocked/all')
+router.route('/countries/unlocked/:id')
   .get(requireAuth, async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -328,16 +328,18 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-    }
-  });
 
 /**
  * Sign in a user and return an authentication token.
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
-    const { token, email, homeCountry } = UserController.signin(req.user);
-    res.json({ token, email, homeCountry });
+    const {
+      token, id, email, homeCountry,
+    } = UserController.signin(req.user);
+    res.json({
+      token, id, email, homeCountry,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
@@ -348,8 +350,12 @@ router.post('/signin', requireSignin, async (req, res) => {
  */
 router.post('/signup', async (req, res) => {
   try {
-    const { token, email, homeCountry } = await UserController.signup(req.body);
-    res.json({ token, email, homeCountry });
+    const {
+      token, id, email, homeCountry,
+    } = await UserController.signup(req.body);
+    res.json({
+      token, id, email, homeCountry,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
