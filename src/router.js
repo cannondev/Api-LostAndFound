@@ -335,8 +335,12 @@ router.delete('/thoughts/all', async (req, res) => {
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
-    const { token, email, homeCountry } = UserController.signin(req.user);
-    res.json({ token, email, homeCountry });
+    const {
+      token, email, homeCountry, fullName,
+    } = UserController.signin(req.user);
+    res.json({
+      token, email, homeCountry, fullName,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
@@ -347,8 +351,12 @@ router.post('/signin', requireSignin, async (req, res) => {
  */
 router.post('/signup', async (req, res) => {
   try {
-    const { token, email } = await UserController.signup(req.body);
-    res.json({ token, email });
+    const {
+      token, email, homeCountry, fullName,
+    } = await UserController.signup(req.body);
+    res.json({
+      token, email, homeCountry, fullName,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }

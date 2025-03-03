@@ -7,11 +7,15 @@ function tokenForUser(user) {
 }
 
 export const signin = (user) => {
-  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+  return {
+    token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry, fullName: user.fullName,
+  };
 };
 
-export const signup = async ({ email, password, homeCountry }) => {
-  if (!email || !password || !homeCountry) {
+export const signup = async ({
+  email, password, homeCountry, fullName,
+}) => {
+  if (!email || !password || !homeCountry || !fullName) {
     throw new Error('You must provide email, password, and home country');
   }
 
@@ -20,8 +24,12 @@ export const signup = async ({ email, password, homeCountry }) => {
     throw new Error('Email is in use');
   }
 
-  const user = new User({ email, password, homeCountry });
+  const user = new User({
+    email, password, homeCountry, fullName,
+  });
   await user.save();
 
-  return { token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry };
+  return {
+    token: tokenForUser(user), email: user.email, homeCountry: user.homeCountry, fullName: user.fullName,
+  };
 };

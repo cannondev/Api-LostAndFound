@@ -92,7 +92,8 @@ export async function createThought(thoughtFields) {
 
     // Save the thought with coordinates and SVG URL
     const thought = new Thought({
-      user: User._id, // ✅ Set the authenticated user
+      user: User._id,
+      fullName: User.fullName,
       content: thoughtFields.content,
       stamp: thoughtFields.stamp,
       countryOriginated: thoughtFields.countryOriginated,
