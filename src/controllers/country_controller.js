@@ -1,9 +1,23 @@
 import ThoughtModel from '../models/thoughts_model';
 import CountryModel from '../models/country_model';
 
+// country_controller.js
+function normalizeCountryName(countryName) {
+  const mappings = {
+    'Russian Federation': 'Russia',
+    Türkiye: 'Turkey',
+    'Korea, Republic of': 'South Korea',
+    'United States of America': 'United States',
+    'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom',
+    // Add any additional mappings as needed
+  };
+  return mappings[countryName] || countryName;
+}
+
 export async function unlockCountry(countryName) {
   try {
-    const country = await CountryModel.findOne({ countryName });
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       throw new Error(`Country not found: ${countryName}`);
     }
@@ -21,7 +35,8 @@ export async function unlockCountry(countryName) {
 
 export async function getCountryDetails(countryName) {
   try {
-    const country = await CountryModel.findOne({ countryName });
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       throw new Error(`Country not found: ${countryName}`);
     }
@@ -33,7 +48,8 @@ export async function getCountryDetails(countryName) {
 
 export async function addFunFact(countryName, fact) {
   try {
-    const country = await CountryModel.findOne({ countryName });
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       throw new Error(`Country not found: ${countryName}`);
     }
@@ -114,5 +130,38 @@ export async function getAllCountriesWithThoughts() {
     return countries;
   } catch (error) {
     throw new Error(`Get countries with thoughts error: ${error.message}`);
+  }
+}
+
+export async function getScratchData(countryName) {
+  try {
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
+    if (!country) {
+      throw new Error(`Country not found: ${countryName}`);
+    }
+    // Return scratchPaths or an empty array if not defined
+    return { paths: country.scratchPaths || [] };
+  } catch (error) {
+    throw new Error(`Get scratch data error: ${error.message}`);
+  }
+}
+
+export async function saveScratchData(countryName, scratchPath) {
+  try {
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
+    if (!country) {
+      throw new Error(`Country not found: ${countryName}`);
+    }
+    // Initialize scratchPaths if necessary and add the new scratchPath
+    if (!country.scratchPaths) {
+      country.scratchPaths = [];
+    }
+    country.scratchPaths.push(scratchPath);
+    await country.save();
+    return scratchPath;
+  } catch (error) {
+    throw new Error(`Save scratch data error: ${error.message}`);
   }
 }
