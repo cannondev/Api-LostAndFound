@@ -1,26 +1,26 @@
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
-const configuration = new Configuration({
-  apiKey: process.env.AI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
 export async function getCountryDescription(countryName) {
-  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's official name, capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED`;
+  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's official name, capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED.`;
 
   try {
-    const response = await openai.createCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      prompt,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 50,
       temperature: 0.7,
+      store: true,
     });
 
-    const fact = response.data.choices[0].text.trim();
-    return fact;
+    const description = completion.choices[0].message.content.trim();
+    return description;
   } catch (error) {
-    console.error('Error generating fun fact:', error);
+    console.error('Error generating country description:', error);
     throw new Error(`OpenAI API error: ${error.message}`);
   }
 }
@@ -29,17 +29,21 @@ export async function getFoodFunFact(countryName) {
   const prompt = `Provide a single sentence fun fact about a notable cuisine from ${countryName}.`;
 
   try {
-    const response = await openai.createCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      prompt,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 50,
       temperature: 0.7,
+      store: true,
     });
 
-    const fact = response.data.choices[0].text.trim();
-    return fact;
+    const foodFunFact = completion.choices[0].message.content.trim();
+    return foodFunFact;
   } catch (error) {
-    console.error('Error generating fun fact:', error);
+    console.error('Error generating food fun fact:', error);
     throw new Error(`OpenAI API error: ${error.message}`);
   }
 }
@@ -48,36 +52,44 @@ export async function getCultureFunFact(countryName) {
   const prompt = `Provide a single sentence fun fact about a notable aspect of culture from ${countryName}. Do not make it about food, but maybe a fun fact about a citizen's lifestyle.`;
 
   try {
-    const response = await openai.createCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      prompt,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 50,
       temperature: 0.7,
+      store: true,
     });
 
-    const fact = response.data.choices[0].text.trim();
-    return fact;
+    const cultureFunFact = completion.choices[0].message.content.trim();
+    return cultureFunFact;
   } catch (error) {
-    console.error('Error generating fun fact:', error);
+    console.error('Error generating culture fun fact:', error);
     throw new Error(`OpenAI API error: ${error.message}`);
   }
 }
 
 export async function getPersonFunFact(countryName) {
-  const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe its an inspiring story or great accomplishment.`;
+  const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe it's an inspiring story or great accomplishment.`;
 
   try {
-    const response = await openai.createCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      prompt,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
       max_tokens: 50,
       temperature: 0.7,
+      store: true,
     });
 
-    const fact = response.data.choices[0].text.trim();
-    return fact;
+    const personFunFact = completion.choices[0].message.content.trim();
+    return personFunFact;
   } catch (error) {
-    console.error('Error generating fun fact:', error);
+    console.error('Error generating person fun fact:', error);
     throw new Error(`OpenAI API error: ${error.message}`);
   }
 }
