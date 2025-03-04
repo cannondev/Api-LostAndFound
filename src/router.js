@@ -7,7 +7,7 @@ import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_con
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser,
+  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser, generateCountryData,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
@@ -382,5 +382,8 @@ router.route('/countries/:countryName/scratch')
       res.status(500).json({ error: error.message });
     }
   });
+
+/** ******* OpenAI Routes ********** */
+router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
 
 export default router;
