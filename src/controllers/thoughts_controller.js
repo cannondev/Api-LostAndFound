@@ -103,6 +103,7 @@ export async function createThought(thoughtFields) {
     // Save thought with valid coordinates
     const thought = new Thought({
       user: User._id,
+      fullName: User.fullName,
       content: thoughtFields.content,
       stamp: thoughtFields.stamp,
       countryOriginated: thoughtFields.countryOriginated,

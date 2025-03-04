@@ -7,6 +7,7 @@ const UserSchema = new Schema(
     email: {
       type: String, unique: true, lowercase: true, required: true,
     },
+    fullName: { type: String, required: true },
     password: { type: String, required: true },
     homeCountry: { type: String, required: true },
     unlockedCountries: { type: [String], default: [] },
