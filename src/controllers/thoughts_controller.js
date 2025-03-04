@@ -1,9 +1,43 @@
 import fetch from 'node-fetch';
-import svgPathBounds from 'svg-path-bounds';
+import { createCanvas, loadImage } from 'canvas';
+import sharp from 'sharp';
 import countryList, { getCode, getName } from 'country-list';
 import Thought from '../models/thoughts_model';
 import User from '../models/user_model';
 
+async function isPointInsideImage(x, y, imageBuffer) {
+  const canvas = createCanvas(768, 768); // Adjust size as needed
+  const ctx = canvas.getContext('2d');
+
+  // Load the SVG-rendered image
+  const image = await loadImage(imageBuffer);
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  // Get pixel data at (x, y)
+  const pixelData = ctx.getImageData(x, y, 1, 1).data;
+
+  // Check if pixel is NOT transparent
+  return pixelData[3] > 0; // Alpha > 0 means it’s inside the shape
+}
+function findValidCoordinates(pngBuffer) {
+  return new Promise((resolve, reject) => {
+    function attempt() {
+      const randomX = Math.floor(Math.random() * 768);
+      const randomY = Math.floor(Math.random() * 768);
+
+      isPointInsideImage(randomX, randomY, pngBuffer)
+        .then((isInside) => {
+          if (isInside) {
+            resolve({ x: randomX, y: randomY }); // Found valid point
+          } else {
+            attempt(); // Retry if outside
+          }
+        })
+        .catch(reject); // Handle errors
+    }
+    attempt(); // Start first attempt
+  });
+}
 export async function createThought(thoughtFields) {
   try {
     if (!User) {
@@ -21,7 +55,11 @@ export async function createThought(thoughtFields) {
       throw new Error(`Invalid country name provided: ${thoughtFields.countryOriginated}`);
     }
 
-    const allCountryCodes = countryList.getCodes();
+    const sovereignCountries = new Set([
+      'AF', 'AL', 'DZ', 'AD', 'AO', 'AG', 'AR', 'AM', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BT', 'BO', 'BA', 'BW', 'BR', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'CF', 'TD', 'CL', 'CN', 'CO', 'KM', 'CD', 'CG', 'CR', 'HR', 'CU', 'CY', 'CZ', 'DK', 'DJ', 'DM', 'DO', 'EC', 'EG', 'SV', 'GQ', 'ER', 'EE', 'SZ', 'ET', 'FJ', 'FI', 'FR', 'GA', 'GM', 'GE', 'DE', 'GH', 'GR', 'GD', 'GT', 'GN', 'GW', 'GY', 'HT', 'HN', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IL', 'IT', 'CI', 'JM', 'JP', 'JO', 'KZ', 'KE', 'KI', 'KP', 'KR', 'KW', 'KG', 'LA', 'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT', 'LU', 'MG', 'MW', 'MY', 'MV', 'ML', 'MT', 'MH', 'MR', 'MU', 'MX', 'FM', 'MD', 'MC', 'MN', 'ME', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'NZ', 'NI', 'NE', 'NG', 'MK', 'NO', 'OM', 'PK', 'PW', 'PA', 'PG', 'PY', 'PE', 'PH', 'PL', 'PT', 'QA', 'RO', 'RU', 'RW', 'KN', 'LC', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL', 'SG', 'SK', 'SI', 'SB', 'SO', 'ZA', 'SS', 'ES', 'LK', 'SD', 'SR', 'SE', 'CH', 'SY', 'TJ', 'TZ', 'TH', 'TL', 'TG', 'TO', 'TT', 'TN', 'TR', 'TM', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UY', 'UZ', 'VU', 'VA', 'VE', 'VN', 'YE', 'ZM', 'ZW',
+    ]);
+
+    const allCountryCodes = countryList.getCodes().filter((code) => { return sovereignCountries.has(code); });
     const filteredCountries = allCountryCodes.filter(
       (countryCode) => { return countryCode !== originatingCountryCode; },
     );
@@ -50,47 +88,19 @@ export async function createThought(thoughtFields) {
     const response = await fetch(countrySvgUrl);
     if (!response.ok) throw new Error(`Failed to fetch SVG for ${randomCountryCode}`);
 
-    const svgText = await response.text();
+    const svgBuffer = await response.buffer();
 
-    // Extract the <path> from the SVG file
-    const pathMatch = svgText.match(/<path[^>]*d="([^"]+)"/);
-    if (!pathMatch) throw new Error(`No valid <path> found in SVG for ${randomCountryCode}`);
+    // Convert SVG to PNG
+    const pngBuffer = await sharp(svgBuffer).resize(768, 768).png().toBuffer();
 
-    const countryShapePath = pathMatch[1]; // Extracted `d` path
-    console.log(' Extracted Country Shape Path:', countryShapePath);
+    // Use Promise-based function to get valid coordinates
+    const { x: randomX, y: randomY } = await findValidCoordinates(pngBuffer);
 
-    // Extract bounding box from the path
-    const [minX, minY, maxX, maxY] = svgPathBounds(countryShapePath);
-
-    if (!minX || !minY || !maxX || !maxY) {
-      throw new Error(` Bounding box extraction failed for ${randomCountryCode}`);
-    }
-
-    console.log('Extracted Bounding Box:', {
-      minX, minY, maxX, maxY,
-    });
-
-    // Generate random coordinates within the bounding box
-    const randomX = Math.random() * (maxX - minX) + minX;
-    const randomY = Math.random() * (maxY - minY) + minY;
-
-    console.log('Generated Random Coordinates:', { randomX, randomY });
-
-    // Extract viewBox dimensions from the SVG
-    const viewBoxMatch = svgText.match(/viewBox="([\d.\s-]+)"/);
-    const viewBox = viewBoxMatch ? viewBoxMatch[1].split(' ').map(Number) : [0, 0, 1024, 1024];
-
-    const [minSvgX, minSvgY, maxSvgX, maxSvgY] = viewBox;
-
-    // **Normalize coordinates relative to viewBox**
-    const normalizedX = ((randomX - minX) / (maxX - minX)) * (maxSvgX - minSvgX) + minSvgX;
-    const normalizedY = ((randomY - minY) / (maxY - minY)) * (maxSvgY - minSvgY) + minSvgY;
-
-    console.log('Normalized Coordinates:', { normalizedX, normalizedY });
+    console.log(`Valid coordinates found: (${randomX}, ${randomY})`);
 
     const randomCountryName = getName(randomCountryCode);
 
-    // Save the thought with coordinates and SVG URL
+    // Save thought with valid coordinates
     const thought = new Thought({
       user: User._id,
       fullName: User.fullName,
@@ -98,12 +108,9 @@ export async function createThought(thoughtFields) {
       stamp: thoughtFields.stamp,
       countryOriginated: thoughtFields.countryOriginated,
       countrySentTo: randomCountryName,
-      xCoordinate: normalizedX,
-      yCoordinate: normalizedY,
-      svgUrl: countrySvgUrl, // Store SVG URL for frontend use
-      viewBox: {
-        minSvgX, minSvgY, maxSvgX, maxSvgY,
-      },
+      xCoordinate: randomX,
+      yCoordinate: randomY,
+      svgUrl: countrySvgUrl,
     });
 
     const savedThought = await thought.save();
