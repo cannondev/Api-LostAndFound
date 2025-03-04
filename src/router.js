@@ -7,7 +7,7 @@ import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_con
 import {
   addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts,
+  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
@@ -25,6 +25,7 @@ router.get('/', (req, res) => {
 /**
  * Gets all thoughts.
  */
+
 router.route('/thought')
   .get(async (req, res) => {
     try {
@@ -333,8 +334,12 @@ router.delete('/thoughts/all', async (req, res) => {
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
-    const { token, email, homeCountry } = UserController.signin(req.user);
-    res.json({ token, email, homeCountry });
+    const {
+      token, email, homeCountry, fullName,
+    } = UserController.signin(req.user);
+    res.json({
+      token, email, homeCountry, fullName,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
@@ -345,11 +350,37 @@ router.post('/signin', requireSignin, async (req, res) => {
  */
 router.post('/signup', async (req, res) => {
   try {
-    const { token, email, homeCountry } = await UserController.signup(req.body);
-    res.json({ token, email, homeCountry });
+    const {
+      token, email, homeCountry, fullName,
+    } = await UserController.signup(req.body);
+    res.json({
+      token, email, homeCountry, fullName,
+    });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
 });
+
+router.route('/countries/:countryName/scratch')
+  .get(requireAuth, async (req, res) => {
+    try {
+      const { countryName } = req.params;
+      // Use the authenticated user's id (req.user.id)
+      const data = await getScratchDataForUser(req.user.id, countryName);
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  })
+  .post(requireAuth, async (req, res) => {
+    try {
+      const { countryName } = req.params;
+      const scratchPath = req.body; // Expecting an object like { id, points: [...] }
+      const savedPath = await saveScratchDataForUser(req.user.id, countryName, scratchPath);
+      res.status(200).json({ message: 'Scratch data saved successfully', scratchPath: savedPath });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 export default router;

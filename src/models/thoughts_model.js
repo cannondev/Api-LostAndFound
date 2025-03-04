@@ -2,19 +2,13 @@
 import mongoose, { Schema } from 'mongoose';
 
 const ThoughtSchema = new Schema({
-  user: String,
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   content: String,
   stamp: String,
   countryOriginated: String,
   countrySentTo: String,
   xCoordinate: Number,
   yCoordinate: Number,
-  viewBox: {
-    minSvgX: Number,
-    minSvgY: Number,
-    maxSvgX: Number,
-    maxSvgY: Number,
-  },
   createdAt: { type: Date, default: Date.now },
 });
 
