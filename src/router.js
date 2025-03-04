@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import * as Thoughts from './controllers/thoughts_controller';
 import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_controller';
 import {
-  addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
+  addUserFunFact, getCountryDetails, getCountryUserFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
   getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser, generateCountryData,
 } from './controllers/country_controller';
@@ -196,7 +196,7 @@ router.route('/countries/:countryName/funfact')
       }
 
       const { fact } = req.body;
-      const updatedCountry = await addFunFact(countryName, fact);
+      const updatedCountry = await addUserFunFact(countryName, fact);
       res.status(200).json({ message: `Successfully added new fact to ${countryName}`, country: updatedCountry });
     } catch (error) {
       res.status(400).json({ error: `${error.message}` });
@@ -274,7 +274,7 @@ router.route('/countries/:countryName/funFacts')
         return res.status(403).json({ error: `Access denied. You must unlock ${countryName} first.` });
       }
 
-      const allFacts = await getCountryFacts(countryName);
+      const allFacts = await getCountryUserFacts(countryName);
       res.status(200).json({ message: 'Successfully retrieved all country facts', funFacts: allFacts });
     } catch (error) {
       res.status(500).json({ error: `${error.message}` });
@@ -384,6 +384,7 @@ router.route('/countries/:countryName/scratch')
   });
 
 /** ******* OpenAI Routes ********** */
+// for a given country, generate an AI description and fun facts
 router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
 
 export default router;

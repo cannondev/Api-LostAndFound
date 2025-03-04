@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';
 import fetch from 'node-fetch';
-import IndividualModel from '../models/country_model';
+// eslint-disable-next-line import/extensions
+import IndividualModel from '../models/country_model.js';
 
 mongoose.connect('mongodb://localhost:27017/lostandfound_db');
 

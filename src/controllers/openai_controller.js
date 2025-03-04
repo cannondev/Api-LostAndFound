@@ -2,8 +2,8 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
-export async function getCountryDescription(countryName) {
-  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's official name, capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED.`;
+export async function genCountryDescription(countryName) {
+  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name, capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED.`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -12,7 +12,7 @@ export async function getCountryDescription(countryName) {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 50,
+      max_tokens: 200,
       temperature: 0.7,
       store: true,
     });
@@ -25,7 +25,7 @@ export async function getCountryDescription(countryName) {
   }
 }
 
-export async function getFoodFunFact(countryName) {
+export async function genFoodFunFact(countryName) {
   const prompt = `Provide a single sentence fun fact about a notable cuisine from ${countryName}.`;
 
   try {
@@ -35,7 +35,7 @@ export async function getFoodFunFact(countryName) {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 50,
+      max_tokens: 100,
       temperature: 0.7,
       store: true,
     });
@@ -48,7 +48,7 @@ export async function getFoodFunFact(countryName) {
   }
 }
 
-export async function getCultureFunFact(countryName) {
+export async function genCultureFunFact(countryName) {
   const prompt = `Provide a single sentence fun fact about a notable aspect of culture from ${countryName}. Do not make it about food, but maybe a fun fact about a citizen's lifestyle.`;
 
   try {
@@ -58,7 +58,7 @@ export async function getCultureFunFact(countryName) {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 50,
+      max_tokens: 100,
       temperature: 0.7,
       store: true,
     });
@@ -71,7 +71,7 @@ export async function getCultureFunFact(countryName) {
   }
 }
 
-export async function getPersonFunFact(countryName) {
+export async function genPersonFunFact(countryName) {
   const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe it's an inspiring story or great accomplishment.`;
 
   try {
@@ -81,7 +81,7 @@ export async function getPersonFunFact(countryName) {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 50,
+      max_tokens: 100,
       temperature: 0.7,
       store: true,
     });

@@ -9,7 +9,7 @@ const CountrySchema = new Schema({
   foodFunFact: { type: String },
   cultureFunFact: { type: String },
   personFunFact: { type: String },
-  // funFacts: [{ type: String }], // Array of fun facts for the country
+  userFunFacts: [{ type: String }], // Array of fun facts for the country
   thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
   scratchPaths: { type: Array, default: [] },
 });
