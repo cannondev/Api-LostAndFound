@@ -7,7 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export async function getCountryDescription(countryName) {
-  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's official name, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED`;
+  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's official name, capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED`;
 
   try {
     const response = await openai.createCompletion({
