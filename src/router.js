@@ -207,7 +207,7 @@ router.route('/countries/:countryName/funfact')
 /**
  * Retrieve all countries unlocked by the authenticated user.
  */
-router.route('/countries/unlocked/all')
+router.route('/countries/unlocked/all') 
   .get(requireAuth, async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
