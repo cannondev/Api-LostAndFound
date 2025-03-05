@@ -25,6 +25,7 @@ router.get('/', (req, res) => {
 /**
  * Gets all thoughts.
  */
+
 router.route('/thought')
   .get(async (req, res) => {
     try {
@@ -328,17 +329,16 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 /**
  * Sign in a user and return an authentication token.
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
     const {
-      token, id, email, homeCountry,
+      token, id, email, homeCountry, fullName,
     } = UserController.signin(req.user);
     res.json({
-      token, id, email, homeCountry,
+      token, id, email, homeCountry, fullName,
     });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
@@ -351,10 +351,10 @@ router.post('/signin', requireSignin, async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     const {
-      token, id, email, homeCountry,
+      token, id, email, homeCountry, fullName,
     } = await UserController.signup(req.body);
     res.json({
-      token, id, email, homeCountry,
+      token, id, email, homeCountry, fullName,
     });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
