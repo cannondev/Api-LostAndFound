@@ -2,7 +2,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const ThoughtSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  user: String,
   content: String,
   stamp: String,
   countryOriginated: String,

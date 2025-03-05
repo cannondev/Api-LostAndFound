@@ -49,7 +49,6 @@ export async function createThought(thoughtFields) {
     }
 
     // Convert country name to ISO code
-    // const normalizedCountryName = countryNameMap[thoughtFields.countryOriginated] || thoughtFields.countryOriginated;
     const originatingCountryCode = getCode(thoughtFields.countryOriginated);
 
     if (!originatingCountryCode) {
@@ -104,7 +103,6 @@ export async function createThought(thoughtFields) {
     // Save thought with valid coordinates
     const thought = new Thought({
       user: User._id,
-      fullName: User.fullName,
       content: thoughtFields.content,
       stamp: thoughtFields.stamp,
       countryOriginated: thoughtFields.countryOriginated,
