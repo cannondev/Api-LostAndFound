@@ -5,9 +5,9 @@ import mongoose from 'mongoose';
 import * as Thoughts from './controllers/thoughts_controller';
 import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_controller';
 import {
-  addUserFunFact, getCountryDetails, getCountryUserFacts, getCountryThoughts, getAllCountries,
+  addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser, generateCountryData,
+  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
@@ -25,7 +25,6 @@ router.get('/', (req, res) => {
 /**
  * Gets all thoughts.
  */
-
 router.route('/thought')
   .get(async (req, res) => {
     try {
@@ -197,7 +196,7 @@ router.route('/countries/:countryName/funfact')
       }
 
       const { fact } = req.body;
-      const updatedCountry = await addUserFunFact(countryName, fact);
+      const updatedCountry = await addFunFact(countryName, fact);
       res.status(200).json({ message: `Successfully added new fact to ${countryName}`, country: updatedCountry });
     } catch (error) {
       res.status(400).json({ error: `${error.message}` });
@@ -207,7 +206,7 @@ router.route('/countries/:countryName/funfact')
 /**
  * Retrieve all countries unlocked by the authenticated user.
  */
-router.route('/countries/unlocked/:id')
+router.route('/countries/unlocked/all')
   .get(requireAuth, async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -275,7 +274,7 @@ router.route('/countries/:countryName/funFacts')
         return res.status(403).json({ error: `Access denied. You must unlock ${countryName} first.` });
       }
 
-      const allFacts = await getCountryUserFacts(countryName);
+      const allFacts = await getCountryFacts(countryName);
       res.status(200).json({ message: 'Successfully retrieved all country facts', funFacts: allFacts });
     } catch (error) {
       res.status(500).json({ error: `${error.message}` });
@@ -329,17 +328,14 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 /**
  * Sign in a user and return an authentication token.
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
-    const {
-      token, id, email, homeCountry, fullName,
-    } = UserController.signin(req.user);
-    res.json({
-      token, id, email, homeCountry, fullName,
-    });
+    const { token, email, homeCountry } = UserController.signin(req.user);
+    res.json({ token, email, homeCountry });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
@@ -350,12 +346,8 @@ router.post('/signin', requireSignin, async (req, res) => {
  */
 router.post('/signup', async (req, res) => {
   try {
-    const {
-      token, id, email, homeCountry, fullName,
-    } = await UserController.signup(req.body);
-    res.json({
-      token, id, email, homeCountry, fullName,
-    });
+    const { token, email, homeCountry } = await UserController.signup(req.body);
+    res.json({ token, email, homeCountry });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
   }
@@ -382,9 +374,5 @@ router.route('/countries/:countryName/scratch')
       res.status(500).json({ error: error.message });
     }
   });
-
-/** ******* OpenAI Routes ********** */
-// for a given country, generate an AI description and fun facts
-router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
 
 export default router;
