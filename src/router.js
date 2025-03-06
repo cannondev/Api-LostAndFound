@@ -34,32 +34,80 @@ router.route('/thought')
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  })
-  /**
+  });
+/**
    * Create a new thought for the authenticated user
    */
+// .post(requireAuth, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id);
+
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     if (!user.homeCountry) {
+//       return res.status(400).json({ error: 'User homeCountry is missing' });
+//     }
+
+//     const newThought = await Thoughts.createThought({
+//       content: req.body.content,
+//       countryOriginated: user.homeCountry,
+//     });
+
+//     user.thoughts.push(newThought._id);
+//     await user.save();
+
+//     res.status(200).json({ message: 'Thought created successfully', thought: newThought });
+//   } catch (error) {
+//     res.status(500).json({ error: `Create thought error: ${error.message}` });
+//   }
+// });
+router.route('/thought')
   .post(requireAuth, async (req, res) => {
     try {
+      console.log('🔥 New Thought Request Received');
+      console.log('🔑 Headers:', req.headers);
+      console.log('📦 Request Body:', req.body);
+
+      if (!req.user) {
+        console.error('❌ ERROR: No user found in request');
+        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+      }
+
+      console.log('✅ Authenticated user:', req.user);
+
       const user = await User.findById(req.user.id);
+      console.log('🔍 Looking for user with ID:', req.user.id);
 
       if (!user) {
+        console.error('❌ ERROR: User not found');
         return res.status(404).json({ error: 'User not found' });
       }
 
       if (!user.homeCountry) {
+        console.error('⚠️ ERROR: User homeCountry is missing');
         return res.status(400).json({ error: 'User homeCountry is missing' });
       }
 
+      console.log('🌍 User Home Country:', user.homeCountry);
+
       const newThought = await Thoughts.createThought({
+        user, // Pass the user object here
         content: req.body.content,
         countryOriginated: user.homeCountry,
       });
 
+      console.log('📝 New Thought Created:', newThought);
+
       user.thoughts.push(newThought._id);
       await user.save();
 
+      console.log('✅ Thought successfully saved!');
+
       res.status(200).json({ message: 'Thought created successfully', thought: newThought });
     } catch (error) {
+      console.error('🚨 Create thought error:', error);
       res.status(500).json({ error: `Create thought error: ${error.message}` });
     }
   });
