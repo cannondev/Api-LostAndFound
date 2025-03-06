@@ -40,9 +40,11 @@ function findValidCoordinates(pngBuffer) {
 }
 export async function createThought(thoughtFields) {
   try {
-    if (!User) {
+    if (!thoughtFields.user) {
       throw new Error('Unauthorized: User is required.');
     }
+
+    const { user } = thoughtFields;
 
     if (!thoughtFields.countryOriginated) {
       throw new Error('Missing required field: countryOriginated');
@@ -103,7 +105,7 @@ export async function createThought(thoughtFields) {
 
     // Save thought with valid coordinates
     const thought = new Thought({
-      user: User._id,
+      user: user._id,
       fullName: User.fullName,
       content: thoughtFields.content,
       stamp: thoughtFields.stamp,
@@ -121,6 +123,41 @@ export async function createThought(thoughtFields) {
     throw new Error(`Create thought error: ${error.message}`);
   }
 }
+
+// export async function createThought(thoughtFields) {
+//   try {
+//     if (!thoughtFields.user) {  // Change from checking "User" to checking "thoughtFields.user"
+//       throw new Error('Unauthorized: User is required.');
+//     }
+
+//     const user = thoughtFields.user;  // Extract user
+
+//     if (!thoughtFields.countryOriginated) {
+//       throw new Error('Missing required field: countryOriginated');
+//     }
+
+//     // Convert country name to ISO code
+//     const originatingCountryCode = getCode(thoughtFields.countryOriginated);
+
+//     if (!originatingCountryCode) {
+//       throw new Error(`Invalid country name provided: ${thoughtFields.countryOriginated}`);
+//     }
+
+//     const thought = new Thought({
+//       user: user._id,  // Make sure to store the user's ID
+//       fullName: user.fullName,
+//       content: thoughtFields.content,
+//       stamp: thoughtFields.stamp,
+//       countryOriginated: thoughtFields.countryOriginated,
+//     });
+
+//     const savedThought = await thought.save();
+//     console.log('Thought Successfully Saved:', savedThought);
+//     return savedThought;
+//   } catch (error) {
+//     throw new Error(`Create thought error: ${error.message}`);
+//   }
+// }
 
 export async function getThoughtsByUser(userId) {
   try {
