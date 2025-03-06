@@ -55,7 +55,8 @@ export async function getCountryDetails(countryName) {
 export async function generateCountryData(req, res) {
   try {
     const { countryName } = req.params;
-    const country = await CountryModel.findOne({ countryName });
+    const normalizedName = normalizeCountryName(countryName);
+    const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       return res.status(404).json({ error: `Country ${countryName} not found` });
     }
