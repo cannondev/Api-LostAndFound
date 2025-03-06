@@ -26,7 +26,7 @@ export async function genCountryDescription(countryName) {
 }
 
 export async function genFoodFunFact(countryName) {
-  const prompt = `Provide a single sentence fun fact about a notable cuisine from ${countryName}.`;
+  const prompt = `Provide a single sentence fun fact about a notable cuisine from ${countryName}. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -49,7 +49,7 @@ export async function genFoodFunFact(countryName) {
 }
 
 export async function genCultureFunFact(countryName) {
-  const prompt = `Provide a single sentence fun fact about a notable aspect of culture from ${countryName}. Do not make it about food, but maybe a fun fact about a citizen's lifestyle.`;
+  const prompt = `Provide a single sentence fun fact about a notable aspect of culture from ${countryName}. Do not make it about food, but maybe a fun fact about a citizen's lifestyle. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -72,7 +72,7 @@ export async function genCultureFunFact(countryName) {
 }
 
 export async function genPersonFunFact(countryName) {
-  const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe it's an inspiring story or great accomplishment.`;
+  const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe it's an inspiring story or great accomplishment. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
 
   try {
     const completion = await openai.chat.completions.create({

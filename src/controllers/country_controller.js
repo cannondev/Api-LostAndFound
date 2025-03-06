@@ -1,6 +1,9 @@
 import ThoughtModel from '../models/thoughts_model';
 import CountryModel from '../models/country_model';
 import User from '../models/user_model';
+import {
+  genCountryDescription, genFoodFunFact, genCultureFunFact, genPersonFunFact,
+} from './openai_controller';
 
 // country_controller.js
 function normalizeCountryName(countryName) {
@@ -9,6 +12,7 @@ function normalizeCountryName(countryName) {
     Türkiye: 'Turkey',
     'Korea, Republic of': 'South Korea',
     'United States of America': 'United States',
+    USA: 'United States',
     'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom',
     // Add any additional mappings as needed
   };
@@ -37,6 +41,7 @@ export async function unlockCountry(countryName) {
 export async function getCountryDetails(countryName) {
   try {
     const normalizedName = normalizeCountryName(countryName);
+    console.log(`Normalized Country Name: ${normalizedName}`);
     const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       throw new Error(`Country not found: ${countryName}`);
@@ -47,14 +52,41 @@ export async function getCountryDetails(countryName) {
   }
 }
 
-export async function addFunFact(countryName, fact) {
+export async function generateCountryData(req, res) {
+  try {
+    const { countryName } = req.params;
+    const country = await CountryModel.findOne({ countryName });
+    if (!country) {
+      return res.status(404).json({ error: `Country ${countryName} not found` });
+    }
+
+    // these functions are in openai_controller.js
+    const description = await genCountryDescription(countryName);
+    const foodFunFact = await genFoodFunFact(countryName);
+    const cultureFunFact = await genCultureFunFact(countryName);
+    const personFunFact = await genPersonFunFact(countryName);
+
+    country.description = description;
+    country.foodFunFact = foodFunFact;
+    country.cultureFunFact = cultureFunFact;
+    country.personFunFact = personFunFact;
+
+    await country.save();
+
+    return res.status(200).json({ message: 'Country data generated successfully', country });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export async function addUserFunFact(countryName, fact) {
   try {
     const normalizedName = normalizeCountryName(countryName);
     const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       throw new Error(`Country not found: ${countryName}`);
     }
-    country.funFacts.push(fact);
+    country.userFunFacts.push(fact);
     await country.save();
     return country;
   } catch (error) {
@@ -83,13 +115,13 @@ export async function getCountryThoughts(countryName) {
   }
 }
 
-export async function getCountryFacts(countryName) {
+export async function getCountryUserFacts(countryName) {
   try {
     const country = await CountryModel.findOne({ countryName }, 'funFacts');
     if (!countryName) {
       throw new Error(`Country not found: ${countryName}`);
     }
-    return country.funFacts;
+    return country.userFunFacts;
   } catch (error) {
     throw new Error(`Get country facts error: ${error.message}`);
   }
