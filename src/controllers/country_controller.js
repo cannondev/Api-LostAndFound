@@ -2,7 +2,7 @@ import ThoughtModel from '../models/thoughts_model';
 import CountryModel from '../models/country_model';
 import User from '../models/user_model';
 import {
-  genCountryDescription, genFoodFunFact, genCultureFunFact, genPersonFunFact,
+  genCountryDescription, genFoodFunFact, genCultureFunFact, genPoliticsFunFact, genLanguageFunFact, genLandmarkFunFact, genHistoryFunFact,
 } from './openai_controller';
 
 // country_controller.js
@@ -65,12 +65,18 @@ export async function generateCountryData(req, res) {
     const description = await genCountryDescription(countryName);
     const foodFunFact = await genFoodFunFact(countryName);
     const cultureFunFact = await genCultureFunFact(countryName);
-    const personFunFact = await genPersonFunFact(countryName);
+    const politicsFunFact = await genPoliticsFunFact(countryName);
+    const languageFunFact = await genLanguageFunFact(countryName);
+    const landmarkFunFact = await genLandmarkFunFact(countryName);
+    const historyFunFact = await genHistoryFunFact(countryName);
 
     country.description = description;
     country.foodFunFact = foodFunFact;
     country.cultureFunFact = cultureFunFact;
-    country.personFunFact = personFunFact;
+    country.politicsFunFact = politicsFunFact;
+    country.languageFunFact = languageFunFact;
+    country.landmarkFunFact = landmarkFunFact;
+    country.historyFunFact = historyFunFact;
 
     await country.save();
 

@@ -7,7 +7,7 @@ dotenv.config({ silent: true });
 const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
 export async function genCountryDescription(countryName) {
-  const prompt = `Provide a 2 to 3 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name (in english chracters and official language characters), capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED.`;
+  const prompt = `Provide a 2 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name (in english chracters and official language characters), capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED.`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -75,8 +75,8 @@ export async function genCultureFunFact(countryName) {
   }
 }
 
-export async function genPersonFunFact(countryName) {
-  const prompt = `Provide a single sentence fun fact about a notable person native to ${countryName}. Maybe it's an inspiring story or great accomplishment. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
+export async function genPoliticsFunFact(countryName) {
+  const prompt = `Provide a single sentence fun fact about the politics of ${countryName}. Maybe it's about current events or an important event in history. KEEP IT LIGHT HEARTED AND INFORMATIVE. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -90,10 +90,79 @@ export async function genPersonFunFact(countryName) {
       store: true,
     });
 
-    const personFunFact = completion.choices[0].message.content.trim();
-    return personFunFact;
+    const politicsFunFact = completion.choices[0].message.content.trim();
+    return politicsFunFact;
   } catch (error) {
-    console.error('Error generating person fun fact:', error);
+    console.error('Error generating politics fun fact:', error);
+    throw new Error(`OpenAI API error: ${error.message}`);
+  }
+}
+
+export async function genLanguageFunFact(countryName) {
+  const prompt = `Provide a single sentence fun fact about the official language of ${countryName}. KEEP IT LIGHTHEARTED AND INFORMATIVE. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 100,
+      temperature: 0.7,
+      store: true,
+    });
+
+    const languageFunFact = completion.choices[0].message.content.trim();
+    return languageFunFact;
+  } catch (error) {
+    console.error('Error generating language fun fact:', error);
+    throw new Error(`OpenAI API error: ${error.message}`);
+  }
+}
+
+export async function genLandmarkFunFact(countryName) {
+  const prompt = `Provide a single sentence fun fact about a notable landmark of ${countryName}. KEEP IT LIGHTHEARTED AND INFORMATIVE. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 100,
+      temperature: 0.7,
+      store: true,
+    });
+
+    const landmarkFunFact = completion.choices[0].message.content.trim();
+    return landmarkFunFact;
+  } catch (error) {
+    console.error('Error generating landmark fun fact:', error);
+    throw new Error(`OpenAI API error: ${error.message}`);
+  }
+}
+
+export async function genHistoryFunFact(countryName) {
+  const prompt = `Provide a single sentence fun fact about the history of ${countryName}. KEEP IT LIGHTHEARTED AND INFORMATIVE. DO NOT EXCEED 315 CHARACTERS IN LENGTH`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 100,
+      temperature: 0.7,
+      store: true,
+    });
+
+    const historyFunFact = completion.choices[0].message.content.trim();
+    return historyFunFact;
+  } catch (error) {
+    console.error('Error generating history fun fact:', error);
     throw new Error(`OpenAI API error: ${error.message}`);
   }
 }
