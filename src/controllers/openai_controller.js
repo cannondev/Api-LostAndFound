@@ -1,9 +1,5 @@
 import OpenAI from 'openai';
 
-import dotenv from 'dotenv';
-
-dotenv.config({ silent: true });
-
 const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
 export async function genCountryDescription(countryName) {
