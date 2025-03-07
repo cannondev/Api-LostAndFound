@@ -14,6 +14,8 @@ function normalizeCountryName(countryName) {
     'United States of America': 'United States',
     USA: 'United States',
     'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom',
+    'Côte d\'Ivoire': 'Ivory Coast',
+    'Tanzania, United Republic of': 'Tanzania',
     // Add any additional mappings as needed
   };
   return mappings[countryName] || countryName;
