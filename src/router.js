@@ -41,7 +41,7 @@ router.route('/thought')
    * Create a new thought for the authenticated user
    */
 router.route('/thought')
-  .post(requireAuth, async (req, res) => {
+  .post(async (req, res) => {
     try {
       console.log('🔥 New Thought Request Received');
       console.log('🔑 Headers:', req.headers);
@@ -88,6 +88,58 @@ router.route('/thought')
       res.status(500).json({ error: `Create thought error: ${error.message}` });
     }
   });
+
+// // senda a thought by USER ID, does not require authentication, use to populate maps with thoughts
+// router.route('/thought')
+//   .post(async (req, res) => {
+//     try {
+//       console.log('🔥 New Thought Request Received');
+//       console.log('🔑 Headers:', req.headers);
+//       console.log('📦 Request Body:', req.body);
+
+//       // Remove authentication requirement; expect userId in request body.
+//       const { userId, content } = req.body;
+//       if (!userId) {
+//         return res.status(400).json({ error: 'User ID is required in request body' });
+//       }
+//       if (!content) {
+//         return res.status(400).json({ error: 'Thought content is required' });
+//       }
+
+//       // Find the user by the provided userId.
+//       const user = await User.findById(userId);
+//       console.log('🔍 Looking for user with ID:', userId);
+
+//       if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
+
+//       if (!user.homeCountry) {
+//         return res.status(400).json({ error: 'User homeCountry is missing' });
+//       }
+
+//       console.log('🌍 User Home Country:', user.homeCountry);
+
+//       // Create the new thought.
+//       const newThought = await Thoughts.createThought({
+//         user, // Pass the user object here
+//         content,
+//         countryOriginated: user.homeCountry,
+//       });
+
+//       console.log('📝 New Thought Created:', newThought);
+
+//       user.thoughts.push(newThought._id);
+//       await user.save();
+
+//       console.log('✅ Thought successfully saved!');
+
+//       res.status(200).json({ message: 'Thought created successfully', thought: newThought });
+//     } catch (error) {
+//       console.error('🚨 Create thought error:', error);
+//       res.status(500).json({ error: `Create thought error: ${error.message}` });
+//     }
+//   });
 
 /**
  * Retrieve a specific thought by its ID.
