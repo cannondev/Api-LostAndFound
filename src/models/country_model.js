@@ -8,7 +8,10 @@ const CountrySchema = new Schema({
   description: { type: String },
   foodFunFact: { type: String },
   cultureFunFact: { type: String },
-  personFunFact: { type: String },
+  politicsFunFact: { type: String },
+  languageFunFact: { type: String },
+  landmarkFunFact: { type: String },
+  historyFunFact: { type: String },
   userFunFacts: [{ type: String }], // Array of fun facts for the country
   thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
   scratchPaths: { type: Array, default: [] },

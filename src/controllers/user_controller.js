@@ -61,3 +61,15 @@ export const signup = async ({
     token: tokenForUser(user), id: user.id, email: user.email, homeCountry: user.homeCountry, fullName: user.fullName,
   };
 };
+
+export const getUserInfoById = async (userId) => {
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
+  const user = await User.findById(userId).select('fullName homeCountry');
+  if (!user) {
+    throw new Error('User not found');
+  }
+  return user;
+};

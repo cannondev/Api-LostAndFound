@@ -2,7 +2,7 @@ import ThoughtModel from '../models/thoughts_model';
 import CountryModel from '../models/country_model';
 import User from '../models/user_model';
 import {
-  genCountryDescription, genFoodFunFact, genCultureFunFact, genPersonFunFact,
+  genCountryDescription, genFoodFunFact, genCultureFunFact, genPoliticsFunFact, genLanguageFunFact, genLandmarkFunFact, genHistoryFunFact,
 } from './openai_controller';
 
 // country_controller.js
@@ -11,9 +11,12 @@ function normalizeCountryName(countryName) {
     'Russian Federation': 'Russia',
     Türkiye: 'Turkey',
     'Korea, Republic of': 'South Korea',
+    'Korea, Democratic People\'s Republic of': 'North Korea',
     'United States of America': 'United States',
     USA: 'United States',
     'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom',
+    'Côte d\'Ivoire': 'Ivory Coast',
+    'Tanzania, United Republic of': 'Tanzania',
     // Add any additional mappings as needed
   };
   return mappings[countryName] || countryName;
@@ -65,12 +68,18 @@ export async function generateCountryData(req, res) {
     const description = await genCountryDescription(countryName);
     const foodFunFact = await genFoodFunFact(countryName);
     const cultureFunFact = await genCultureFunFact(countryName);
-    const personFunFact = await genPersonFunFact(countryName);
+    const politicsFunFact = await genPoliticsFunFact(countryName);
+    const languageFunFact = await genLanguageFunFact(countryName);
+    const landmarkFunFact = await genLandmarkFunFact(countryName);
+    const historyFunFact = await genHistoryFunFact(countryName);
 
     country.description = description;
     country.foodFunFact = foodFunFact;
     country.cultureFunFact = cultureFunFact;
-    country.personFunFact = personFunFact;
+    country.politicsFunFact = politicsFunFact;
+    country.languageFunFact = languageFunFact;
+    country.landmarkFunFact = landmarkFunFact;
+    country.historyFunFact = historyFunFact;
 
     await country.save();
 

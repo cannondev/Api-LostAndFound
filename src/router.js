@@ -13,6 +13,7 @@ import {
 import * as UserController from './controllers/user_controller';
 import { requireAuth, requireSignin } from './services/passport';
 import User from './models/user_model';
+import { getUserInfoById } from './controllers/user_controller';
 
 const router = Router();
 
@@ -434,5 +435,16 @@ router.route('/countries/:countryName/scratch')
 /** ******* OpenAI Routes ********** */
 // for a given country, generate an AI description and fun facts
 router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
+
+// function to get user data to parse and put in a thought
+router.get('/users/:id/info', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userInfo = await getUserInfoById(id);
+    res.status(200).json({ user: userInfo });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
