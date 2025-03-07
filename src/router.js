@@ -36,34 +36,10 @@ router.route('/thought')
       res.status(500).json({ error: error.message });
     }
   });
+
 /**
    * Create a new thought for the authenticated user
    */
-// .post(requireAuth, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id);
-
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-
-//     if (!user.homeCountry) {
-//       return res.status(400).json({ error: 'User homeCountry is missing' });
-//     }
-
-//     const newThought = await Thoughts.createThought({
-//       content: req.body.content,
-//       countryOriginated: user.homeCountry,
-//     });
-
-//     user.thoughts.push(newThought._id);
-//     await user.save();
-
-//     res.status(200).json({ message: 'Thought created successfully', thought: newThought });
-//   } catch (error) {
-//     res.status(500).json({ error: `Create thought error: ${error.message}` });
-//   }
-// });
 router.route('/thought')
   .post(requireAuth, async (req, res) => {
     try {
