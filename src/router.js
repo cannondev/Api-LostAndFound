@@ -41,7 +41,7 @@ router.route('/thought')
    * Create a new thought for the authenticated user
    */
 router.route('/thought')
-  .post(async (req, res) => {
+  .post(requireAuth, async (req, res) => {
     try {
       console.log('🔥 New Thought Request Received');
       console.log('🔑 Headers:', req.headers);
