@@ -65,3 +65,4 @@ function normalizeCountryName(countryName) {
   };
   return mappings[countryName] || countryName;
 }
+

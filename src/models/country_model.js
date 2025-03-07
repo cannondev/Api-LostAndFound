@@ -5,7 +5,14 @@ const CountrySchema = new Schema({
   countryName: { type: String, required: true, unique: true },
   isUnlocked: { type: Boolean, default: false },
   unlockDate: { type: Date },
-  funFacts: [{ type: String }], // Array of fun facts for the country
+  description: { type: String },
+  foodFunFact: { type: String },
+  cultureFunFact: { type: String },
+  politicsFunFact: { type: String },
+  languageFunFact: { type: String },
+  landmarkFunFact: { type: String },
+  historyFunFact: { type: String },
+  userFunFacts: [{ type: String }], // Array of fun facts for the country
   thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
   scratchPaths: { type: Array, default: [] },
 });

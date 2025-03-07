@@ -5,14 +5,15 @@ import mongoose from 'mongoose';
 import * as Thoughts from './controllers/thoughts_controller';
 import { deleteThoughtById, deleteAllThoughts } from './controllers/thoughts_controller';
 import {
-  addFunFact, getCountryDetails, getCountryFacts, getCountryThoughts, getAllCountries,
+  addUserFunFact, getCountryDetails, getCountryUserFacts, getCountryThoughts, getAllCountries,
   getThoughtCoordinates,
-  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser,
+  getAllCountriesWithThoughts, getScratchDataForUser, saveScratchDataForUser, generateCountryData,
 } from './controllers/country_controller';
 
 import * as UserController from './controllers/user_controller';
 import { requireAuth, requireSignin } from './services/passport';
 import User from './models/user_model';
+import { getUserInfoById } from './controllers/user_controller';
 
 const router = Router();
 
@@ -34,35 +35,111 @@ router.route('/thought')
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  })
-  /**
+  });
+
+/**
    * Create a new thought for the authenticated user
    */
+router.route('/thought')
   .post(requireAuth, async (req, res) => {
     try {
+      console.log('🔥 New Thought Request Received');
+      console.log('🔑 Headers:', req.headers);
+      console.log('📦 Request Body:', req.body);
+
+      if (!req.user) {
+        console.error('❌ ERROR: No user found in request');
+        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+      }
+
+      console.log('✅ Authenticated user:', req.user);
+
       const user = await User.findById(req.user.id);
+      console.log('🔍 Looking for user with ID:', req.user.id);
 
       if (!user) {
+        console.error('❌ ERROR: User not found');
         return res.status(404).json({ error: 'User not found' });
       }
 
       if (!user.homeCountry) {
+        console.error('⚠️ ERROR: User homeCountry is missing');
         return res.status(400).json({ error: 'User homeCountry is missing' });
       }
 
+      console.log('🌍 User Home Country:', user.homeCountry);
+
       const newThought = await Thoughts.createThought({
+        user, // Pass the user object here
         content: req.body.content,
         countryOriginated: user.homeCountry,
       });
 
+      console.log('📝 New Thought Created:', newThought);
+
       user.thoughts.push(newThought._id);
       await user.save();
 
+      console.log('✅ Thought successfully saved!');
+
       res.status(200).json({ message: 'Thought created successfully', thought: newThought });
     } catch (error) {
+      console.error('🚨 Create thought error:', error);
       res.status(500).json({ error: `Create thought error: ${error.message}` });
     }
   });
+
+// // senda a thought by USER ID, does not require authentication, use to populate maps with thoughts
+// router.route('/thought')
+//   .post(async (req, res) => {
+//     try {
+//       console.log('🔥 New Thought Request Received');
+//       console.log('🔑 Headers:', req.headers);
+//       console.log('📦 Request Body:', req.body);
+
+//       // Remove authentication requirement; expect userId in request body.
+//       const { userId, content } = req.body;
+//       if (!userId) {
+//         return res.status(400).json({ error: 'User ID is required in request body' });
+//       }
+//       if (!content) {
+//         return res.status(400).json({ error: 'Thought content is required' });
+//       }
+
+//       // Find the user by the provided userId.
+//       const user = await User.findById(userId);
+//       console.log('🔍 Looking for user with ID:', userId);
+
+//       if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
+
+//       if (!user.homeCountry) {
+//         return res.status(400).json({ error: 'User homeCountry is missing' });
+//       }
+
+//       console.log('🌍 User Home Country:', user.homeCountry);
+
+//       // Create the new thought.
+//       const newThought = await Thoughts.createThought({
+//         user, // Pass the user object here
+//         content,
+//         countryOriginated: user.homeCountry,
+//       });
+
+//       console.log('📝 New Thought Created:', newThought);
+
+//       user.thoughts.push(newThought._id);
+//       await user.save();
+
+//       console.log('✅ Thought successfully saved!');
+
+//       res.status(200).json({ message: 'Thought created successfully', thought: newThought });
+//     } catch (error) {
+//       console.error('🚨 Create thought error:', error);
+//       res.status(500).json({ error: `Create thought error: ${error.message}` });
+//     }
+//   });
 
 /**
  * Retrieve a specific thought by its ID.
@@ -197,7 +274,7 @@ router.route('/countries/:countryName/funfact')
       }
 
       const { fact } = req.body;
-      const updatedCountry = await addFunFact(countryName, fact);
+      const updatedCountry = await addUserFunFact(countryName, fact);
       res.status(200).json({ message: `Successfully added new fact to ${countryName}`, country: updatedCountry });
     } catch (error) {
       res.status(400).json({ error: `${error.message}` });
@@ -207,7 +284,7 @@ router.route('/countries/:countryName/funfact')
 /**
  * Retrieve all countries unlocked by the authenticated user.
  */
-router.route('/countries/unlocked/all')
+router.route('/countries/unlocked/:id')
   .get(requireAuth, async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -275,7 +352,7 @@ router.route('/countries/:countryName/funFacts')
         return res.status(403).json({ error: `Access denied. You must unlock ${countryName} first.` });
       }
 
-      const allFacts = await getCountryFacts(countryName);
+      const allFacts = await getCountryUserFacts(countryName);
       res.status(200).json({ message: 'Successfully retrieved all country facts', funFacts: allFacts });
     } catch (error) {
       res.status(500).json({ error: `${error.message}` });
@@ -329,17 +406,16 @@ router.delete('/thoughts/all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 /**
  * Sign in a user and return an authentication token.
  */
 router.post('/signin', requireSignin, async (req, res) => {
   try {
     const {
-      token, email, homeCountry, fullName,
+      token, id, email, homeCountry, fullName,
     } = UserController.signin(req.user);
     res.json({
-      token, email, homeCountry, fullName,
+      token, id, email, homeCountry, fullName,
     });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
@@ -352,10 +428,10 @@ router.post('/signin', requireSignin, async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     const {
-      token, email, homeCountry, fullName,
+      token, id, email, homeCountry, fullName,
     } = await UserController.signup(req.body);
     res.json({
-      token, email, homeCountry, fullName,
+      token, id, email, homeCountry, fullName,
     });
   } catch (error) {
     res.status(422).send({ error: error.toString() });
@@ -383,5 +459,20 @@ router.route('/countries/:countryName/scratch')
       res.status(500).json({ error: error.message });
     }
   });
+
+/** ******* OpenAI Routes ********** */
+// for a given country, generate an AI description and fun facts
+router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
+
+// function to get user data to parse and put in a thought
+router.get('/users/:id/info', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userInfo = await getUserInfoById(id);
+    res.status(200).json({ user: userInfo });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
