@@ -11,6 +11,7 @@ function normalizeCountryName(countryName) {
     'Russian Federation': 'Russia',
     Türkiye: 'Turkey',
     'Korea, Republic of': 'South Korea',
+    'Korea, Democratic People\'s Republic of': 'North Korea',
     'United States of America': 'United States',
     USA: 'United States',
     'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom',
