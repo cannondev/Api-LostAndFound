@@ -1,11 +1,11 @@
-# Project Name
+# Lost and Found
 ![alt text](image.png)
 
-[*how?*](https://help.github.com/articles/about-readmes/#relative-links-and-image-paths-in-readme-files)
-Scafolding:
+(https://help.github.com/articles/about-readmes/#relative-links-and-image-paths-in-readme-files)
+### Scafolding:
 ![CS52](https://hackmd.io/_uploads/rJiE7PIcye.jpg)
 
-Project Description:
+### Project Description:
 
 "Lost and Found" is a web app where you send anonymous messages as paper airplanes that land on random spots across a world map for others to discover. Each day, unlock a new country to scratch off, explore fun facts, and uncover hidden messages. Collect unique stamps for your virtual passport as you complete countries and unlock achievements, creating a personalized journey of global stories and connections.
 
@@ -15,23 +15,49 @@ https://project-api-lost-and-found.onrender.com
 
 
 ## Architecture
-
-tools: react, redux, mongo/mongoose, zustand
+**Backend Framework:** Express.js  
+- **Database:** MongoDB (Mongoose for schema management)  
+- **Authentication:** Passport.js (JWT-based authentication)  
+- **Security:** Bcrypt.js for password hashing  
+- **Other:**  
+  - OpenAI API  
+  - Sharp 
 
 ## Setup
 
-npm install 
+### Clone the repository:  
+```sh
+git clone https://github.com/your-repo/lost-and-found-backend.git
+cd lost-and-found-backend
+```
+### Install dependencies:
+```
+npm install
+```
+### Set up environment variables:
+Create a .env file in the root directory and configure:
+```
+MONGO_URI=your_mongo_connection_string
+JWT_SECRET=your_jwt_secret
+OPENAI_API_KEY=your_openai_api_key
+```
+
+
 
 ## Deployment
+### Push changes to GitHub
+```
+git add .
+git commit -m "Your commit message"
+git push origin main
+```
 
-npm run dev
+### Manual Deployment
+Go to your Render dashboard. Select the project. Click "Redeploy latest commit" or trigger a build manually.
 
 ## Authors
 
-Yasmeen Hussein
-Peipei Soeung
-Cinay Dilibal
-Thomas Clark
-
-## Acknowledgments
-
+- Yasmeen Hussein
+- Peipei Soeung
+- Cinay Dilibal
+- Thomas Clark
