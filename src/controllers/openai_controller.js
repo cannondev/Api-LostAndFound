@@ -1,13 +1,13 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
+const openai = new OpenAI();
 
 export async function genCountryDescription(countryName) {
   const prompt = `Provide a 1 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name (in english chracters and official language characters), capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 200 CHARACTERS IN LENGTH`;
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
