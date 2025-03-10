@@ -1,7 +1,6 @@
 # Lost and Found
 
 ![TeamLF](https://github.com/user-attachments/assets/113a7ed4-55be-469d-952c-5bd9aedaab07)
-![alt text](image.png)
 
 (https://help.github.com/articles/about-readmes/#relative-links-and-image-paths-in-readme-files)
 ### Scafolding:
