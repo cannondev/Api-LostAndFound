@@ -462,6 +462,7 @@ router.route('/countries/:countryName/scratch')
 
 /** ******* OpenAI Routes ********** */
 // for a given country, generate an AI description and fun facts
+console.log('post route to AI API call');
 router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
 
 // function to get user data to parse and put in a thought
