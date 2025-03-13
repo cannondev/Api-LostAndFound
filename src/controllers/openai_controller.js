@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 
-console.log(`in openai controller. AI API KEY: ${process.env.AI_API_KEY}`);
-const openai = new OpenAI({ apiKey: process.env.AI_API_KEY });
-console.log(`openai started. AI API KEY: ${process.env.AI_API_KEY}`);
+console.log(`in openai controller. AI API KEY: ${process.env.OPENAI_API_KEY}`);
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+console.log(`openai started. AI API KEY: ${process.env.OPENAI_API_KEY}`);
 
 export async function genCountryDescription(countryName) {
   const prompt = `Provide a 1 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name (in english chracters and official language characters), capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 200 CHARACTERS IN LENGTH`;
