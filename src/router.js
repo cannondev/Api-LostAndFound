@@ -462,8 +462,18 @@ router.route('/countries/:countryName/scratch')
 
 /** ******* OpenAI Routes ********** */
 // for a given country, generate an AI description and fun facts
-console.log('post route to AI API call');
-router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
+// router.post('/countries/:countryName/generate-data', requireAuth, generateCountryData);
+
+// chatGPT provided this to log if the request sucessfully hit the backend endpoint
+router.post(
+  '/countries/:countryName/generate-data',
+  requireAuth,
+  (req, res, next) => {
+    console.log('POST request received at /countries/:countryName/generate-data for:', req.params.countryName);
+    next();
+  },
+  generateCountryData,
+);
 
 // function to get user data to parse and put in a thought
 router.get('/users/:id/info', async (req, res) => {
