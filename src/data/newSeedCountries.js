@@ -1,5 +1,5 @@
 // Updated version of seedCountries by PeiPei Soeung to initalize country schemas for deployed web app
-// Updated by Thomas Clark for deployment
+// Updated by Thomas Clark and chatGPT for deployment
 
 /* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';

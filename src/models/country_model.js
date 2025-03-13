@@ -12,8 +12,8 @@ const CountrySchema = new Schema({
   languageFunFact: { type: String },
   landmarkFunFact: { type: String },
   historyFunFact: { type: String },
-  userFunFacts: [{ type: String }], // Array of fun facts for the country
-  thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought documents
+  userFunFacts: [{ type: String }],
+  thoughts: [{ type: Schema.Types.ObjectId, ref: 'Thought' }], // References to Thought schemas
   scratchPaths: { type: Array, default: [] },
 });
 

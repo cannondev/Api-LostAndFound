@@ -1,13 +1,13 @@
+// the openAI docs were very useful and easy to read
 import OpenAI from 'openai';
 
-console.log(`in openai controller. AI API KEY: ${process.env.OPENAI_API_KEY}`);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-console.log(`openai started. AI API KEY: ${process.env.OPENAI_API_KEY}`);
 
+// prompts created by Thomas Clark
 export async function genCountryDescription(countryName) {
-  console.log('inside genCountryDescription');
   const prompt = `Provide a 1 sentence description that highlights only the most essential things to know about ${countryName}. This response MUST include mentions of the country's full name (in english chracters and official language characters), capital city, languages spoken, population, and leader(s), BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 200 CHARACTERS IN LENGTH`;
 
+  // the following setup is documented in the openAI API docs
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -15,8 +15,8 @@ export async function genCountryDescription(countryName) {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 200,
-      temperature: 0.7,
+      max_tokens: 200, // ensure that there is enough tokens to create a full length response. prevent cut-offs
+      temperature: 0.7, // temperature is how random or creative the response can get. good for variety in fun facts, suggested by chatGPT
       store: true,
     });
 
@@ -28,8 +28,8 @@ export async function genCountryDescription(countryName) {
   }
 }
 
+// a prompt for each generated field
 export async function genFoodFunFact(countryName) {
-  console.log('inside genFood');
   const prompt = `Provide a single sentence fun fact about a notable cuisine from ${countryName}. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
@@ -53,7 +53,6 @@ export async function genFoodFunFact(countryName) {
 }
 
 export async function genCultureFunFact(countryName) {
-  console.log('inside genCulture');
   const prompt = `Provide a single sentence fun fact about a notable aspect of culture from ${countryName}. Do not make it about food, but maybe a fun fact about a citizen's lifestyle. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
@@ -77,7 +76,6 @@ export async function genCultureFunFact(countryName) {
 }
 
 export async function genPoliticsFunFact(countryName) {
-  console.log('inside genpolitics');
   const prompt = `Provide a single sentence fun fact about the politics of ${countryName}. Maybe it's about current events or an important event in history. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
@@ -101,7 +99,6 @@ export async function genPoliticsFunFact(countryName) {
 }
 
 export async function genLanguageFunFact(countryName) {
-  console.log('inside genlanguage');
   const prompt = `Provide a single sentence fun fact about the official language of ${countryName}. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
@@ -125,7 +122,6 @@ export async function genLanguageFunFact(countryName) {
 }
 
 export async function genLandmarkFunFact(countryName) {
-  console.log('inside genlandmark');
   const prompt = `Provide a single sentence fun fact about a notable landmark of ${countryName}. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
@@ -149,7 +145,6 @@ export async function genLandmarkFunFact(countryName) {
 }
 
 export async function genHistoryFunFact(countryName) {
-  console.log('inside genhistory');
   const prompt = `Provide a single sentence fun fact about the history of ${countryName}. BUT KEEP IT LIGHTHEARTED BUT NOT CORNY AND CUT DOWN ON THE CLICHES. DO NOT EXCEED 150 CHARACTERS IN LENGTH`;
 
   try {
