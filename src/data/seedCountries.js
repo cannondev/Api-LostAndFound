@@ -4,7 +4,8 @@ import fetch from 'node-fetch';
 // eslint-disable-next-line import/extensions
 import IndividualModel from '../models/country_model.js';
 
-mongoose.connect(process.env.MONGODB_URI);
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lostandfound_db';
+mongoose.connect(mongoURI);
 
 async function seedCountriesFromAPI() {
   try {
