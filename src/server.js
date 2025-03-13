@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import listEndpoints from 'express-list-endpoints';
 import router from './router';
-import { seedCountriesFromAPI } from './data/newSeedCountries'; // adjust path as necessary
+import seedCountriesFromAPI from './data/newSeedCountries'; // adjust path as necessary
 import CountryModel from './models/country_model';
 
 const app = express();
