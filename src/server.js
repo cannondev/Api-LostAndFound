@@ -1,54 +1,57 @@
-/* eslint-disable import/no-extraneous-dependencies */
+// server.js
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import listEndpoints from 'express-list-endpoints'; // npm install express-list-endpoints
+import listEndpoints from 'express-list-endpoints';
 import router from './router';
+import { seedCountriesFromAPI } from './data/newSeedCountries'; // adjust path as necessary
+import CountryModel from './models/country_model';
 
-// initialize
 const app = express();
 
-// enable/disable cross origin resource sharing if necessary
+// Middleware
 app.use(cors());
-
-// enable/disable http request logging
 app.use(morgan('dev'));
-
-// enable only if you want templating
 app.set('view engine', 'ejs');
-
-// enable only if you want static assets from folder static
 app.use(express.static('static'));
-
-// this just allows us to render ejs from the ../app/views directory
 app.set('views', path.join(__dirname, '../src/views'));
-
-// enable json message body for posting data to API
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // To parse the incoming requests with JSON payloads
+app.use(express.json());
 app.use('/api', router);
 
-// additional init stuff should go before hitting the routing
-
-// default index route
 app.get('/', (req, res) => {
   res.send('hello world');
 });
 
-// START THE SERVER
-// =============================================================================
+// chatGPT function to initialize country structures in database
+async function initializeCountries() {
+  try {
+    const count = await CountryModel.countDocuments();
+    if (count === 0) {
+      console.log('No countries found. Seeding database...');
+      await seedCountriesFromAPI();
+      console.log('Seeding complete.');
+    } else {
+      console.log(`Database already has ${count} countries.`);
+    }
+  } catch (error) {
+    console.error('Error checking/initializing countries:', error);
+  }
+}
+
 async function startServer() {
   try {
-    // connect DB
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost/lostandfound_db';
     await mongoose.connect(mongoURI);
     console.log(`Mongoose connected to: ${mongoURI}`);
 
+    // Initialize countries if needed
+    await initializeCountries();
+
     const port = process.env.PORT || 9090;
     app.listen(port);
-
     console.log(`Listening on port ${port}`);
   } catch (error) {
     console.error(error);
@@ -56,5 +59,4 @@ async function startServer() {
 }
 
 console.log(listEndpoints(app));
-
 startServer();
