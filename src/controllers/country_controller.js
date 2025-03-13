@@ -59,13 +59,18 @@ export async function generateCountryData(req, res) {
   try {
     console.log('Reached generateCountryData');
     const { countryName } = req.params;
+    console.log('countryName');
+    console.log(countryName);
+    console.log('end');
+    console.log('normalizedName');
     const normalizedName = normalizeCountryName(countryName);
+    console.log('end');
     const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
+      console.log('NO COUNTYR OSDIFNJSOIDF');
       return res.status(404).json({ error: `Country ${countryName} not found` });
-    } else {
-      console.log('got country for generation');
     }
+    console.log('got country for generation');
 
     // these functions are in openai_controller.js
     const description = await genCountryDescription(countryName);
