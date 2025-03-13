@@ -64,6 +64,7 @@ export async function generateCountryData(req, res) {
     console.log('end');
     console.log('normalizedName');
     const normalizedName = normalizeCountryName(countryName);
+    console.log(normalizedName);
     console.log('end');
     const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
