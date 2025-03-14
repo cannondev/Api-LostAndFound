@@ -57,12 +57,15 @@ export async function getCountryDetails(countryName) {
 
 export async function generateCountryData(req, res) {
   try {
+    // get name of country to generate facts about
     const { countryName } = req.params;
     const normalizedName = normalizeCountryName(countryName);
+    // find country schema in database
     const country = await CountryModel.findOne({ countryName: normalizedName });
     if (!country) {
       return res.status(404).json({ error: `Country ${countryName} not found` });
     }
+    console.log('Got country for generation');
 
     // these functions are in openai_controller.js
     const description = await genCountryDescription(countryName);
@@ -73,6 +76,7 @@ export async function generateCountryData(req, res) {
     const landmarkFunFact = await genLandmarkFunFact(countryName);
     const historyFunFact = await genHistoryFunFact(countryName);
 
+    // assign to schema fields
     country.description = description;
     country.foodFunFact = foodFunFact;
     country.cultureFunFact = cultureFunFact;
@@ -81,6 +85,7 @@ export async function generateCountryData(req, res) {
     country.landmarkFunFact = landmarkFunFact;
     country.historyFunFact = historyFunFact;
 
+    // save changes to database
     await country.save();
 
     return res.status(200).json({ message: 'Country data generated successfully', country });
@@ -89,6 +94,7 @@ export async function generateCountryData(req, res) {
   }
 }
 
+// not used
 export async function addUserFunFact(countryName, fact) {
   try {
     const normalizedName = normalizeCountryName(countryName);
