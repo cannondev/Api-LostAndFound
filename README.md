@@ -41,3 +41,5 @@ Relevant backend source code files include:
 5 . NOTE: src/services/passport.js is a poorly named file and handles auth. I did not write this.
 
 This was my first time taking on the challenge of integrating a professional third-party API completely unguided, so I enjoyed the process of reading through the documentation and tweaking my implementation as I progressed. The in-house CSS, flex, etc. styling of the modal was a challenge as well and a fun design process that I enjoyed collaborating on with my group members.
+
+Additional note: this is a cloned repo from the private Dartmouth CS 52 25W org. I cloned it to be public so that I could use it for the DALI application. If need be, I will be more than willing to make any visibility changes necessary to this repo before, during, or after the application process.
