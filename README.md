@@ -6,6 +6,8 @@ Lost and Found is a web app that I, alongside Cinay Dilibal, Peipei Soeung, and 
 ## Deployed Application
 https://project-lost-and-found-muix.onrender.com
 
+BE WARY OF FILE SIZES and RESULTING TOKEN LENGTH. This is a new project that still needs to be optimized. Be aware of word count, I have tested majority-text PDFs with a size < 5mb with success.
+
 ## Video Demo
 https://github.com/user-attachments/assets/96ea9dc5-63c1-43a7-9b8f-4096627b6266
 
