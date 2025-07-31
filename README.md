@@ -14,10 +14,10 @@ Follow these steps to run the project locally:
 
 ```bash
 # 1. Clone the repository
-git clone git@github.com:cannondev/Api-Crammar.git
+git clone git@github.com:cannondev/Api-LostAndFound.git
 
 # 2. Navigate into the project folder
-cd path/to/Api-Crammar
+cd path/to/Api-LostAndFound
 
 # 3. Install dependencies
 npm install
